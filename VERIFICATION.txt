@@ -1,0 +1,19 @@
+Core checks executed in creation environment
+
+PASS: Aligned DKIM OR SPF determines pass
+PASS: Gzip decoding
+PASS: ZIP decoding
+PASS: SQLite import
+PASS: Compression-independent deduplication
+PASS: Message-weighted totals
+PASS: Multiple domains
+PASS: Namespaced XML
+PASS: DTD/entity rejection
+PASS: ZIP expansion limit
+PASS: Gzip expansion limit
+PASS: Archive validation before writes
+PASS: No partial ZIP import
+PASS: Invalid source IP
+PASS: Missing alignment result
+
+Flask and Gunicorn are unavailable here; HTTP integration tests did not run. Core code was executed from the app AST with only the unavailable Flask import removed. Parser and SQLite functions were unchanged. Sandstorm runtime and signed SPK build were not tested. Run the full unittest suite on your development host.
