@@ -89,8 +89,8 @@ def parse_xml(data):
         disposition = text(policy, 'disposition')
         if dkim not in ('pass', 'fail') or spf not in ('pass', 'fail'):
             raise ReportError('Missing or invalid evaluated SPF/DKIM result')
-        if disposition not in ('none', 'quarantine', 'reject'):
-            raise ReportError('Invalid disposition')
+        if disposition not in ('none', 'pass', 'quarantine', 'reject'):
+            raise ReportError(f'Invalid disposition: {disposition!r}')
         auth = {kind: [fields(x) for x in rec.findall('auth_results/' + kind)]
                 for kind in ('dkim', 'spf')}
         rows.append((ip, count, disposition, dkim, spf, int('pass' in (dkim, spf)),

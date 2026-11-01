@@ -58,4 +58,19 @@ window.addEventListener('dragover', e => e.preventDefault()); window.addEventLis
 $('refresh').onclick = () => {page=1; load();};
 $('prev').onclick = () => {page--; load();}; $('next').onclick = () => {page++; load();};
 $('close').onclick = () => $('detail').close();
+
+// Default to the past calendar year through today, using UTC.
+const today = new Date();
+const yearAgo = new Date(today);
+
+yearAgo.setUTCFullYear(today.getUTCFullYear() - 1);
+
+// Clamp February 29 to February 28 if the previous year wasn't a leap year.
+if (yearAgo.getUTCMonth() !== today.getUTCMonth()) {
+  yearAgo.setUTCDate(0);
+}
+
+$('start').value = yearAgo.toISOString().slice(0, 10);
+$('end').value = today.toISOString().slice(0, 10);
+
 load();

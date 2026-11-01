@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="csrf-token" content="{{ csrf }}"><title>DMARC Desk</title><link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"><script defer src="{{ url_for('static', filename='app.js') }}"></script></head>
-<body><main><header><h1>DMARC Desk</h1><p>Multi-domain aggregate report explorer · SQLite storage</p></header>
+<body><main><header><h1>DMARC Desk</h1></header>
 <section id="drop" tabindex="0" role="button" aria-label="Choose or drop DMARC reports"><h2>Drop reports here</h2><p>XML, XML.GZ or ZIP · multiple files supported</p><button id="choose" type="button">Choose files</button><input id="files" type="file" multiple accept=".xml,.gz,.gzip,.zip" hidden></section>
 <pre id="status" role="status" aria-live="polite"></pre>
 <section class="filters"><label>Domain <select id="domain"><option value="">All domains</option></select></label><label>From (UTC) <input id="start" type="date"></label><label>Through (UTC) <input id="end" type="date"></label><label><input id="failures" type="checkbox" checked> Failure rows only</label><button id="refresh">Apply filters</button></section>
@@ -10,4 +10,4 @@
 <div class="scroll"><table><thead><tr><th>Domain / receiver</th><th>Period (UTC)</th><th>Source IP</th><th>Messages</th><th>DMARC</th><th>Aligned DKIM</th><th>Aligned SPF</th><th>Disposition</th><th>Details</th></tr></thead><tbody id="rows"></tbody></table></div>
 <nav><button id="prev">Previous</button><span id="page"></span><button id="next">Next</button></nav>
 <dialog id="detail"><button id="close">Close</button><h2>Record details</h2><pre id="detailtext"></pre></dialog>
-<footer>Data stays in this app instance. Anyone granted access to this grain can view and import reports. No mailbox polling, DNS lookup or external services.</footer></main></body></html>
+<footer>Anyone granted access to this grain can view and import reports.</footer></main></body></html>
