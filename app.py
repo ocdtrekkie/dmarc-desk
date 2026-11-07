@@ -11,6 +11,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from flask import Flask, abort, g, jsonify, render_template, request, session
 from defusedxml import ElementTree as ET
+import re
+import subprocess
 
 LIMIT = 20 * 1024 * 1024
 MAX_MEMBERS = 100
@@ -169,6 +171,78 @@ def import_file(db, data):
             imported += 1
     return {'imported': imported, 'duplicates': duplicates}
 
+def grain_email_address(app):
+    session_id = request.headers.get('X-Sandstorm-Session-Id')
+    if not session_id:
+        # Normal when running locally outside Sandstorm.
+        return None, 'Email delivery is available when running in Sandstorm.'
+
+    # Resolve relative to app.py, not the current working directory.
+    helper = os.environ.get(
+        'GET_PUBLIC_ID_HELPER',
+        str(
+            Path(__file__).resolve().parent
+            / 'sandstorm-integration'
+            / 'getPublicId'
+        ),
+    )
+
+    try:
+        result = subprocess.run(
+            [helper, session_id],
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
+            text=True,
+            encoding='utf-8',
+            check=True,
+            timeout=5,
+        )
+
+        # Standard Sandstorm sample helper output:
+        # line 1: publicId
+        # line 2: hostname
+        # line 3: autoUrl
+        lines = result.stdout.splitlines()
+        if len(lines) < 2:
+            raise ValueError('Incomplete helper output')
+
+        public_id = lines[0].strip()
+        hostname = lines[1].strip().rstrip('.')
+
+        # Validate before constructing an address or mailto link.
+        if not re.fullmatch(r'[A-Za-z0-9]+', public_id):
+            raise ValueError('Invalid public ID')
+
+        labels = hostname.split('.')
+        if (
+            not hostname
+            or len(hostname) > 253
+            or any(
+                not re.fullmatch(
+                    r'[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?',
+                    label,
+                )
+                for label in labels
+            )
+        ):
+            raise ValueError('Invalid hostname')
+
+        return f'{public_id}@{hostname}', None
+
+    except (
+        OSError,
+        subprocess.SubprocessError,
+        ValueError,
+        UnicodeError,
+    ) as exc:
+        # Do not log the session ID, helper arguments, or raw output.
+        app.logger.warning(
+            'Could not obtain grain email address: %s',
+            type(exc).__name__,
+        )
+        return None, 'The grain email address is temporarily unavailable.'
+
 def create_app(test_config=None):
     app = Flask(__name__)
     app.config.update(MAX_CONTENT_LENGTH=25*1024*1024,
@@ -231,7 +305,13 @@ def create_app(test_config=None):
     @app.get('/')
     def index():
         session.setdefault('csrf', secrets.token_hex(32))
-        return render_template('index.html', csrf=session['csrf'])
+        grain_email, grain_email_error = grain_email_address(app)
+        return render_template(
+            'index.html',
+            csrf=session['csrf'],
+            grain_email=grain_email,
+            grain_email_error=grain_email_error,
+        )
 
     @app.post('/api/import')
     def upload():

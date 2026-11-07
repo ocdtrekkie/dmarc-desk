@@ -1,7 +1,58 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="csrf-token" content="{{ csrf }}"><title>DMARC Desk</title><link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"><script defer src="{{ url_for('static', filename='app.js') }}"></script></head>
 <body><main><header><h1>DMARC Desk</h1></header>
-<section id="drop" tabindex="0" role="button" aria-label="Choose or drop DMARC reports"><h2>Drop reports here</h2><p>XML, XML.GZ or ZIP · multiple files supported</p><button id="choose" type="button">Choose files</button><input id="files" type="file" multiple accept=".xml,.gz,.gzip,.zip" hidden></section>
+<div class="import-options">
+  <section
+    id="drop"
+    tabindex="0"
+    role="button"
+    aria-label="Choose or drop DMARC reports"
+  >
+    <h2>Drop reports here</h2>
+    <p>XML, XML.GZ or ZIP · multiple files supported</p>
+
+    <button id="choose" type="button">Choose files</button>
+
+    <input
+      id="files"
+      type="file"
+      multiple
+      accept=".xml,.gz,.gzip,.zip"
+      hidden
+    >
+  </section>
+
+  <section
+    class="email-import"
+    aria-labelledby="email-import-heading"
+  >
+    <h2 id="email-import-heading">
+      Email reports directly to this grain
+    </h2>
+
+    {% if grain_email %}
+      <p>
+        Send DMARC report emails to
+        <a href="mailto:{{ grain_email }}">
+          <code>{{ grain_email }}</code>
+        </a>.
+      </p>
+
+      <p class="note">
+        Report attachments are imported automatically by this grain's
+        Maildir importer.
+      </p>
+
+      <p>
+        DMARC aggregate-report destination:
+        <code>rua=mailto:{{ grain_email }}</code>
+      </p>
+    {% else %}
+      <p class="note">{{ grain_email_error }}</p>
+    {% endif %}
+  </section>
+</div>
+
 <pre id="status" role="status" aria-live="polite"></pre>
 <section class="filters"><label>Domain <select id="domain"><option value="">All domains</option></select></label><label>From (UTC) <input id="start" type="date"></label><label>Through (UTC) <input id="end" type="date"></label><label><input id="failures" type="checkbox" checked> Failure rows only</label><button id="refresh">Apply filters</button></section>
 <p class="note">Counts represent messages observed by reporting receivers, not confirmed inbox delivery. Date filters include whole reports whose periods overlap the selected range. Overlapping reports can double-count messages.</p>

@@ -250,6 +250,7 @@ opt/app-venv/pyvenv.cfg
 opt/app/.sandstorm/launcher.sh
 opt/app/app.py
 opt/app/mail_import.py
+opt/app/sandstorm-integration/getPublicId
 opt/app/static/app.js
 opt/app/static/style.css
 opt/app/templates/index.html
@@ -322,6 +323,7 @@ usr/lib/python3.11/__pycache__/ssl.cpython-311.pyc
 usr/lib/python3.11/__pycache__/string.cpython-311.pyc
 usr/lib/python3.11/__pycache__/stringprep.cpython-311.pyc
 usr/lib/python3.11/__pycache__/struct.cpython-311.pyc
+usr/lib/python3.11/__pycache__/subprocess.cpython-311.pyc
 usr/lib/python3.11/__pycache__/tempfile.cpython-311.pyc
 usr/lib/python3.11/__pycache__/textwrap.cpython-311.pyc
 usr/lib/python3.11/__pycache__/threading.cpython-311.pyc
@@ -531,6 +533,7 @@ usr/lib/python3.11/ssl.py
 usr/lib/python3.11/string.py
 usr/lib/python3.11/stringprep.py
 usr/lib/python3.11/struct.py
+usr/lib/python3.11/subprocess.py
 usr/lib/python3.11/tempfile.py
 usr/lib/python3.11/textwrap.py
 usr/lib/python3.11/threading.py

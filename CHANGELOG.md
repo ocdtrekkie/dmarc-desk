@@ -1,3 +1,7 @@
+# 0.0.3
+
+- DMARC record setup information is now provided
+
 # 0.0.2
 
 - Disposition of "pass" is now accepted in DMARC reports
